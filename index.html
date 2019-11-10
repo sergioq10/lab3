@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Sign up Page</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <link href="css/styles.css" rel="stylesheet" type="text/css" />
+    </head>
+    
+    <body id="body">
+        <div id="title">
+            <h1 >Sign Up</h1>
+            </div>
+            <form id="signupForm" method="get" action="welcome.html">
+            First Name: <input type="text" name="fName"><br>
+            Last Name:  <input type="text" name="lName"><br>
+            Gender:     <input type="radio" name="gender" value="m"> Male
+                        <input type="radio" name="gender" value="f"> Female <br><br>
+            
+            Zip Code:   <input type="text" name="zip" id="zip"><br>
+            City:       <span id="city"></span> <br>
+            Latitude:   <span id="latitude"></span><br>
+            Longitude:  <span id="longitude"></span><br><br> 
+            
+            State:      
+            <select id="state" name="state">
+            <!--<option value="">Select One</option>
+                <option value="ca"> California</option>
+                <option value="ny"> New York</option>
+                <option value="tx"> Texas</option> . -->
+                
+                
+            </select><br />
+            
+            Select a County:  <select id="county" name="state"></select><br><br>
+            
+            Desired Username: <input type="text"         id="username" name="username"><br>
+                              <span id="usernameError"></span><br>
+            Password:         <input type="password"     id="password" name="password"><br>
+                              <span></span>
+            Password again:   <input type="password"     id="passwordAgain"><br>
+                              <span id="passwordAgainError"></span><br><br>
+                              
+                              
+            <input type="submit" value="Sign Up!"> 
+            
+            
+            </form>
+            <img src = "img/signUp.webp" width="300" height="300" alt="signup">
+            
+            <script>
+            
+            var usernameAvailable = false; 
+            
+                $("#zip").on("change",function(){  //if changed to click prompt on top not zip displayed. 
+                    // alert($("#zip").val());
+            
+                                    
+                $.ajax({
+                    method: "GET",
+                    url: "https://cst336.herokuapp.com/projects/api/cityInfoAPI.php", //http or https depending on link
+                    dataType: "json", //type
+                    data: {"zip" : $("#zip").val() }, //parameters 
+                    success: function(result,status) {
+                        //alert(result.city);
+                        $("#city").html(result.city); 
+                        //results that retrieve information 
+                        $("#longitude").html(result.longitude); 
+                        $("#latitude").html(result.latitude); 
+                
+                        } 
+                });//ajax
+                }); //zip
+                
+                
+                
+                
+                $("#state").click(function(){ //this will allow user to click any state from the list. 
+                    
+                $.ajax({
+                    method: "GET",
+                    url: "https://cst336.herokuapp.com/projects/api/state_abbrAPI.php", 
+                    dataType: "json", //type
+                    data: {"usps" : $("#state").val() },
+                    success: function(result,status){
+                    
+                    $("#state").html("<option>Select One</option");  
+                        
+                        for(let i=0; i<result.length; i++){
+                         $("#state").append("<option>" + result[i].usps +"</option>"); //changing the state to usps where the data is located 
+                        }
+                    
+                    }
+                })
+                });
+                
+                
+                $("#state").on("change", function(){
+                    // alert($("state").val()); 
+                 $.ajax({
+                    method: "GET",
+                    url: "https://cst336.herokuapp.com/projects/api/countyListAPI.php?state=ca", 
+                    dataType: "json", //type
+                    data: {"state" : $("#state").val() },
+                    success: function(result,status){
+                        //alert(result[0].county);
+                        
+                        $("#county").html("<option>Select One</option"); //county to clean drop bar on refresh
+                        for(let i=0; i<result.length; i++){
+                            
+                            $("#county").append("<option>" + result[i].county +"</option>");
+                        }
+                        
+                    }//parameters 
+                })
+                    
+                });//state
+                
+                $("#username").change(function(){
+                    
+                    // alert($("username").val());
+                    $.ajax({
+                    method: "GET",
+                    url: "https://cst336.herokuapp.com/projects/api/usernamesAPI.php?username=eeny", 
+                    dataType: "json", //type
+                    data: {"username" : $("#username").val() },
+                    success: function(result,status){
+                        //alert(result[0].county);
+                        
+                        if(result.available){
+                            
+                            $("#usernameError").html("Username is available!");
+                            $("#usernameError").css("color","green");
+                            usernameAvailable = true;
+                        }   
+                        else{
+                            $("#usernameError").html("Username is unavailable!");
+                            $("#usernameError").css("color","red");
+                            usernameAvailable = false; 
+                                
+                        }
+                    }
+                   }) //ajax
+                }); //userName
+                
+                $("#signupForm").on("submit", function(e){
+                   // alert("submitting form");
+                   if(!isFormValid())
+                   {
+                    event.preventDefault();
+                    
+                   }
+                   
+                }); //signupForm
+                
+                function isFormValid(){
+                    isValid = true;
+                    
+                    if(!usernameAvailable){
+                        isValid = false; 
+            
+                    }
+                    if($("#username").val().length == 0){
+                        isValid = false;
+                        $("#usernameError").html("Username is required");
+                        
+                    }
+                    
+                    if($("#username").val().length > 5){
+                        isValid = false;
+                        $("#usernameError").html("Username must be 6 characters.")
+                    }
+                    
+                    if($("#password").val() != $("#passwordAgain").val()){
+                        $("#passwordAgainError").html("Passwords Mismatch");
+                        isValid = false; 
+                    }
+                    return isValid; 
+                }
+                
+
+            </script> <!-- zip file --> 
+            
+    </body>
+    <div id="bottom">
+    <p id="p">...</p>
+    </div>
+</html>    

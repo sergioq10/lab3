@@ -4,7 +4,8 @@
         <title>Sign up Page</title>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <link href="css/styles.css" rel="stylesheet" type="text/css" />
-    </head>
+        <link rel="stylesheet" href="css/boostrap.min.css">
+     </head>
     
     <body id="body">
         <div id="title">
@@ -23,10 +24,7 @@
             
             State:      
             <select id="state" name="state">
-            <!--<option value="">Select One</option>
-                <option value="ca"> California</option>
-                <option value="ny"> New York</option>
-                <option value="tx"> Texas</option> . -->
+
                 
                 
             </select><br />
@@ -41,10 +39,10 @@
                               <span id="passwordAgainError"></span><br><br>
                               
                               
-            <input type="submit" value="Sign Up!"> 
-            
+            <input type="submit" class="btn btn-primary" value="Sign Up!"> 
             
             </form>
+            
             <img src = "img/signUp.webp" width="300" height="300" alt="signup">
             
             <script>
@@ -165,9 +163,9 @@
                         
                     }
                     
-                    if($("#username").val().length > 5){
+                    if($("#username").val().length < 5){
                         isValid = false;
-                        $("#usernameError").html("Username must be 6 characters.")
+                        $("#usernameError").html("Username must be 6 characters.");
                     }
                     
                     if($("#password").val() != $("#passwordAgain").val()){
